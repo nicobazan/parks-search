@@ -1,30 +1,30 @@
 import 'source-map-support/register';
-import type { ValidatedEventAPIGatewayProxyEvent } from '../../libs/apiGateway';
+import type { APIGatewayEvent} from "aws-lambda"
 
-import { SearchClient } from '@libs/searchClient';
+import { SearchClient} from '@libs/searchClient';
 
 import { formatJSONResponse } from '@libs/apiGateway';
-import { middyfy } from '@libs/lambda';
 
 const searchClient = new SearchClient(process.env.ES_SEARCH_NODE);
 
 const PARKS_INDEX = process.env.ES_PARKS_INDEX;
 
 
-const searchIndex: ValidatedEventAPIGatewayProxyEvent<{}>= async (event) => {
-
+const searchIndex = async (event: APIGatewayEvent) => {
+event.queryStringParameters
     console.log('event: ', event);
-    const {q} = event.queryStringParameters;
+    const q = event.queryStringParameters?.q;
 
     try {
 
 
-        const response = searchClient.searchIndex(PARKS_INDEX, 'fullName', q)
-        console.log(response)
-        return formatJSONResponse({
-            message: `Hello , welcome to the exciting Serverless world!`,
-            event,
-        });
+        const response =await  searchClient.searchIndex(PARKS_INDEX, q)
+        
+        const hits = SearchClient.hitsResponse(response);
+                
+        const parks = hits.map(h=>h._source); 
+        
+        return formatJSONResponse({parks});
     } catch (error) {
         console.log('caught error: ', error);
         return formatJSONResponse({
@@ -35,4 +35,4 @@ const searchIndex: ValidatedEventAPIGatewayProxyEvent<{}>= async (event) => {
 
 }
 
-export const main = middyfy(searchIndex);
+export const main = searchIndex;

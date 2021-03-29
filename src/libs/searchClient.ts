@@ -1,4 +1,4 @@
-import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch';
+import { Client, ApiResponse, RequestParams, } from '@elastic/elasticsearch';
 import { config } from 'aws-sdk';
 import * as connector from 'aws-elasticsearch-connector';
 
@@ -8,6 +8,15 @@ export class SearchClient {
 
     constructor(node: string) {
         this.client = new Client({ ...connector(config), node });
+    }
+
+    static hitsResponse(response: ApiResponse): Array<any> {
+        if (response.statusCode !== 200)
+            return [];
+
+        const h = response.body?.hits?.hits;
+
+        return Array.isArray(h) ? h : [];
     }
 
     async bulkInsert<T extends { id: string }>(index: string, docs: Array<T>, setId: boolean = false) {
@@ -37,15 +46,13 @@ export class SearchClient {
 
     }
 
-    searchIndex(index: string, mapping: string, val: string | number):Promise<ApiResponse> {
-        const body = {};
-        if (!!mapping)
-            body[mapping] = val
+    searchIndex(index: string, val: string | number): Promise<ApiResponse> {
+        let body = {}
+        if(val)
+            body = {query: {match:{_all:val}}};
+        
         const request: RequestParams.Search = { index, body };
         return this.client.search(request);
-
-
-
     }
 
     deleteIndex(index: string) {

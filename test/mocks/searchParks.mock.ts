@@ -1,8 +1,20 @@
 export default {
-    "resource": "/search/parks",
-    "path": "/search/parks",
-    "httpMethod": "GET",
+  resource: '/search/parks',
+  path: '/search/parks',
+  httpMethod: 'GET',
+  queryStringParameters: { q: 'zion' },
+  // queryStringParameters: null,
+  headers: {
 
-    "queryStringParameters": null
+  },
+  multiValueHeaders: {
 
-  }
+  },
+  body: null,
+  isBase64Encoded: false,
+  pathParameters: null,
+
+  stageVariables: null,
+  multiValueQueryStringParameters: null,
+
+}

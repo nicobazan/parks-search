@@ -34,8 +34,8 @@ const serverlessConfiguration: AWS = {
           "es:ESHttpGet"
         ],
         "Resource": [
-          "arn:aws:es:us-west-2:086507697825:domain/parks-search",
-          "arn:aws:es:us-west-2:086507697825:domain/parks-search/*"
+          `arn:aws:es:us-west-2:${parsed.AWS_ACCOUNT}:domain/parks-search`,
+          `arn:aws:es:us-west-2:${parsed.AWS_ACCOUNT}:domain/parks-search/*`
         ]
       }
     ],
