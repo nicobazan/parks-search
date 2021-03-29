@@ -1,0 +1,11 @@
+.env
+node_modules
+.serverless/*
+.serverless
+.vscode
+.vscode/*
+
+# Ignores compiled TypeScript files
+src/**/*.map
+src/**/*.js
+
